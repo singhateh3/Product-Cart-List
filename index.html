@@ -11,13 +11,12 @@
     />
     <title>Product-List</title>
   </head>
-  <body class="bg-amber-50 z-0">
-    <div class="main shadow-lg w-full sm:px-20 py-12 px-4">
+  <body class="bg-amber-50 z-0 font-redHat">
+    <div class="main shadow-lg w-full sm:px-20 py-12 px-4 ">
       <h1 class="font-bold text-4xl my-6 sm:px-14">Desserts</h1>
-      <div class="desserts flex flex-col sm:flex sm:flex-row">
-        <div class="container flex flex-col flex-wrap items-center flex-4 sm:flex-row">
+      <div class="desserts flex flex-col sm:flex sm:flex-row md:flex-col lg:flex-row ">
+        <div class="container flex flex-col flex-wrap items-center flex-4 sm:flex-row lg:flex-row sm:gap-9 md:gap-0 ">
           <!-- <div class="card">
-            
             <div
               class="image-container hover:border-amber-900 hover:border-4 rounded-2xl"
             >
@@ -45,7 +44,7 @@
         
       <div class="cart-container bg-white flex-1 p-4 sm:-mt-10 h-fit">
         <h2 class="font-bold text-amber-600 px-3">Your cart (<span class="item-count">0</span>)</h2>
-        <div class="flex p-4 items-container flex-col justify-center text">
+        <div class="flex p-4 items-container flex-col justify-center font-redHat">
           <img src="./assets/images/illustration-empty-cart.svg" alt="empty-cart" class="w-36">
           <p>Your added items will appear here</p>
         </div>
@@ -61,14 +60,14 @@
         </div>
       </div>
     </div>
-    <div class="stagnant-bg fixed inset-0 bg-white/10  z-40 pointer-events-auto hidden"></div>
-    <div class="finish-order p-6 fixed inset-0 bg-white flex z-50  sm:max-w-md transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 shadow-lg flex-col justify-between hidden h-fit w-full">
+    <div class="stagnant-bg fixed inset-0 bg-white/10 z-40 pointer-events-auto hidden"></div>
+    <div class="finish-order p-6 fixed inset-0 bg-white flex z-50 sm:max-w-md transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 shadow-lg flex-col justify-between hidden w-full h-[700px] overflow-y-auto">
       <div class="flex flex-col gap-2 mb-4">
       <div class=""><img src="./assets/images/icon-order-confirmed.svg" alt="confirm-order-icon" class="w-10 h-10"></div>
       <div class="font-bold text-3xl break-normal">Order <br class="inline sm:hidden" /> Confirmed</div>
       <p class="text-[10px]">We hope You enjoy your food</p>
       </div>
-      <div class="ordered-items flex-4 bg-amber-50 p-4"></div>
+      <div class="ordered-items flex-4 bg-amber-50 p-4 overflow-auto"></div>
       <div class="start-new-order flex justify-center items-center mx-auto bg-amber-900 py-2 px-4 rounded-full cursor-pointer text-amber-50 w-full">
          Start New Order
         </div>

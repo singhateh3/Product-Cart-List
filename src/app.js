@@ -107,13 +107,16 @@ function renderdesserts() {
   desserts
     .map((dessert) => {
       foodUi += `
-      <div class="card sm:w-1/3 flex flex-col justify-center items-center">
+      <div class="card sm:w-1/3 flex flex-col justify-center items-center sm:mx-4 md:mx-0">
       <picture
               class="image-container hover:border-amber-900 hover:border-4 rounded-2xl"
             >
-            <source media="(min-width:640px)" srcset="${
+            <source media="(min-width: 768px) and (max-width: 1023px)" srcset="${
+              dessert.image.tablet
+            }" />
+            <source media="(min-width:1024px)" srcset="${
               dessert.image.desktop
-            }"/>
+            }" />
               <img
                 src="${dessert.image.mobile}"
                 alt="${dessert.category}"
@@ -129,7 +132,7 @@ function renderdesserts() {
               </button>
 
             </div>
-            <div class="details my-5 flex flex-col text-start items-start  sm:block sm:w-72  w-full">
+            <div class="details my-5 flex flex-col text-start items-start  sm:block sm:w-72 w-full">
               <div class="font-bold text-gray-400">${dessert.category}</div>
               <div class="font-bold name">${dessert.name}</div>
               <div class="text-orange-700 font-bold ">$<span class="price">${dessert.price.toFixed(
@@ -173,17 +176,17 @@ addButtonEl.forEach((button) => {
     // when hover show quantity control else show default
     button.innerHTML = `
     <div class="relative group">
-    <!-- default View -->
+    <!-- default -->
     <div class="normal-view group-hover:hidden flex items-center justify-center gap-2">
       <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
       <span>Add to cart</span>
     </div>
 
-    <!-- Controls View -->
+    <!-- Controls -->
     <div class="controls-view hidden group-hover:flex items-center gap-6 ">
-      <img src="./assets/images/icon-decrement-quantity.svg" alt="decrement" class="cursor-pointer decrement p-2 border rounded-full w-6 h-6" />
-      <span class="quantity text-black font-bold">${quantity}</span>
-      <img src="./assets/images/icon-increment-quantity.svg" alt="increment" class="cursor-pointer increment p-2 border rounded-full w-6 h-6" />
+      <img src="./assets/images/icon-decrement-quantity.svg" alt="decrement" class="cursor-pointer decrement p-2 border rounded-full w-6 h-6 hover:bg-amber-50 hover:fill-amber-900" />
+      <span class="quantity text-white font-bold">${quantity}</span>
+      <img src="./assets/images/icon-increment-quantity.svg" alt="increment" class="cursor-pointer increment p-2 border rounded-full w-6 h-6 hover:text-white" />
     </div>
   </div>
       `;
@@ -301,7 +304,7 @@ addButtonEl.forEach((button) => {
 
       // start new order
       const startNewOrderBtn = document.querySelector(".start-new-order");
-      console.log(startNewOrderBtn);
+      // console.log(startNewOrderBtn);
       startNewOrderBtn.addEventListener("click", function (e) {
         e.preventDefault();
         cart.length = 0;
@@ -332,12 +335,14 @@ const confirmOrder = document.querySelector(".finish-order");
 const stagnant = document.querySelector(".stagnant-bg");
 const confirmOrderBtn = document.querySelector(".confirm-order");
 const orderedItems = document.querySelector(".ordered-items");
+const bodyEl = document.querySelector("body");
 
 confirmOrderBtn.addEventListener("click", function (e) {
   e.preventDefault();
 
   confirmOrder.classList.remove("hidden");
   stagnant.classList.remove("hidden");
+  bodyEl.classList.add("overflow-hidden");
   orderedItems.innerHTML = "";
   let total = 0;
 
@@ -364,14 +369,16 @@ confirmOrderBtn.addEventListener("click", function (e) {
     />
     <div class="">
     <div class="font-bold">${item.name}</div>
-     <div class="text-gray-400">
+     <div class="text-amber-900 font-bold">
     ${
       item.quantity
-    }x <span class="text-sm text-gray-400">@</span>$${item.price.toFixed(2)} 
+    }x <span class="text-sm text-gray-400">@</span><span class="text-gray-400 font-normal"> $${item.price.toFixed(
+        2
+      )} </span>
     </div>
     </div>
     </div>
-    <div class=" ">$${allTotal.toFixed(2)}</div>
+    <div class="text-gray-400">$${allTotal.toFixed(2)}</div>
     `;
       orderedItems.appendChild(div);
     }
