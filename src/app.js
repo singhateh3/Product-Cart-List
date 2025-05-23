@@ -101,13 +101,15 @@ const desserts = [
 ];
 // Global Variables
 const containerEl = document.querySelector(".container");
+const bodyEl = document.querySelector("body");
+
 // Render desserts function
 function renderdesserts() {
   let foodUi = "";
   desserts
     .map((dessert) => {
       foodUi += `
-      <div class="card sm:w-1/3 flex flex-col justify-center items-center sm:mx-4 md:mx-0">
+      <div class="card sm:w-1/3 flex flex-col justify-center items-center sm:mx-4 md:mx-auto lg:mx-0 lg:w-1/3 md:w-48">
       <picture
               class="image-container hover:border-amber-900 hover:border-4 rounded-2xl"
             >
@@ -120,7 +122,7 @@ function renderdesserts() {
               <img
                 src="${dessert.image.mobile}"
                 alt="${dessert.category}"
-                class="sm:w-72 rounded-2xl w-full"
+                class="sm:w-72 rounded-2xl w-full lg:w-72 md:48"
               />
             </picture>
             <div class="-mt-5">
@@ -132,9 +134,11 @@ function renderdesserts() {
               </button>
 
             </div>
-            <div class="details my-5 flex flex-col text-start items-start  sm:block sm:w-72 w-full">
-              <div class="font-bold text-gray-400">${dessert.category}</div>
-              <div class="font-bold name">${dessert.name}</div>
+            <div class="details my-5 flex flex-col text-start items-start  sm:block sm:w-72 w-full lg:w-72 md:w-48">
+              <div class="text-gray-400 text-sm">${dessert.category}</div>
+              <div class="font-bold md:text-[14px] lg:text-[20px] name">${
+                dessert.name
+              }</div>
               <div class="text-orange-700 font-bold ">$<span class="price">${dessert.price.toFixed(
                 2
               )}</span>
@@ -168,15 +172,14 @@ addButtonEl.forEach((button) => {
     if (name) {
       quantity = 1;
 
-      renderQuantityControls();
+      showQuantity();
     }
   });
 
-  function renderQuantityControls() {
+  function showQuantity() {
     // when hover show quantity control else show default
     button.innerHTML = `
     <div class="relative group">
-    <!-- default -->
     <div class="normal-view group-hover:hidden flex items-center justify-center gap-2">
       <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
       <span>Add to cart</span>
@@ -208,7 +211,7 @@ addButtonEl.forEach((button) => {
         });
       }
     }
-    updateItemsContainer();
+    cartUi();
     incrementBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       quantity++;
@@ -219,7 +222,7 @@ addButtonEl.forEach((button) => {
       if (item) {
         item.quantity = quantity;
       }
-      updateItemsContainer();
+      cartUi();
     });
 
     decrementBtn.addEventListener("click", (e) => {
@@ -236,7 +239,7 @@ addButtonEl.forEach((button) => {
         if (item) {
           item.quantity = quantity;
         }
-        updateItemsContainer();
+        cartUi();
       } else {
         quantity = 0;
         if (item) {
@@ -245,10 +248,10 @@ addButtonEl.forEach((button) => {
         button.innerHTML = `<img src="./assets/images/icon-add-to-cart.svg" alt="" />
                 Add to cart`;
       }
-      updateItemsContainer();
+      cartUi();
     });
     // update the items container to show the items or desserts added to cart
-    function updateItemsContainer() {
+    function cartUi() {
       let total = 0;
       itemsContainer.innerHTML = "";
       // items count
@@ -287,7 +290,7 @@ addButtonEl.forEach((button) => {
         icon.addEventListener("click", function (index) {
           // console.log("Its clicking");
           cart.splice(index, 1);
-          updateItemsContainer();
+          cartUi();
           button.innerHTML = `<img src="./assets/images/icon-add-to-cart.svg" alt="" />
                 Add to cart`;
         });
@@ -313,18 +316,19 @@ addButtonEl.forEach((button) => {
         confirmOrder.classList.add("hidden");
         stagnant.classList.add("hidden");
         // reset count items
-
+        countItems.innerText = 0;
         additionalInfo.classList.add("hidden");
         // reset quantity in add button
 
         button.innerHTML = `
-        <div class="relative group">
-        <!-- default View -->
+        <div class="relative">
         <div class="normal-view  flex items-center justify-center gap-2">
           <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
           <span>Add to cart</span>
         </div>
       `;
+        // allow overflow in the body
+        bodyEl.classList.remove("overflow-hidden");
       });
     }
   }
@@ -335,7 +339,6 @@ const confirmOrder = document.querySelector(".finish-order");
 const stagnant = document.querySelector(".stagnant-bg");
 const confirmOrderBtn = document.querySelector(".confirm-order");
 const orderedItems = document.querySelector(".ordered-items");
-const bodyEl = document.querySelector("body");
 
 confirmOrderBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -350,6 +353,7 @@ confirmOrderBtn.addEventListener("click", function (e) {
     if (item.quantity === 0) {
       alert("Quantity is Empty");
       confirmOrder.classList.add("hidden");
+      bodyEl.classList.add("overflow-hidden");
       stagnant.classList.add("hidden");
       return;
     } else {
