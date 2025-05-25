@@ -125,7 +125,7 @@ function renderdesserts() {
                 class="sm:w-72 rounded-2xl w-full lg:w-72 md:48"
               />
             </picture>
-            <div class="-mt-5">
+            <div class="-mt-5 button-container">
               <button
                 class="addButton flex justify-between border-2 rounded-full py-2 px-4 gap-2 bg-white hover:bg-amber-900 hover:text-white hover:border-none"
               >
@@ -134,7 +134,7 @@ function renderdesserts() {
               </button>
 
             </div>
-            <div class="details my-5 flex flex-col text-start items-start  sm:block sm:w-72 w-full lg:w-72 md:w-48">
+            <div class="details my-5 flex flex-col text-start items-start sm:block sm:w-72 w-full lg:w-72 md:w-48">
               <div class="text-gray-400 text-sm">${dessert.category}</div>
               <div class="font-bold md:text-[14px] lg:text-[20px] name">${
                 dessert.name
@@ -166,33 +166,36 @@ addButtonEl.forEach((button) => {
   // console.log(`Add ${name} to cart`);
   button.addEventListener("click", (e) => {
     e.preventDefault();
-
-    console.log(additionalInfo);
+    e.stopPropagation();
+    // console.log(additionalInfo);
     additionalInfo.classList.remove("hidden");
     if (name) {
       quantity = 1;
-
+      alert(`${name}: has been added to cart to cart`);
       showQuantity();
     }
   });
 
   function showQuantity() {
-    // when hover show quantity control else show default
+    // show quantity control
+    // If the contents of the button is switched to controls, then prevent re rendering
+    if (button.querySelector(".controls-view")) return;
     button.innerHTML = `
-    <div class="relative group">
-    <div class="normal-view group-hover:hidden flex items-center justify-center gap-2">
-      <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
-      <span>Add to cart</span>
+    <div class="controls-view flex items-center gap-6 block w-full justify-between">
+      <img src="./assets/images/icon-decrement-quantity.svg" alt="decrement" class="cursor-pointer decrement p-2 border rounded-full w-6 h-6 hover:bg-amber-800 fill-amber-900" />
+      <span class="quantity text-white font-bold pointer-events-none">${quantity}</span>
+      <img src="./assets/images/icon-increment-quantity.svg" alt="increment" class="cursor-pointer increment p-2 border rounded-full w-6 h-6 hover:bg-amber-800" />
     </div>
-
-    <!-- Controls -->
-    <div class="controls-view hidden group-hover:flex items-center gap-6 ">
-      <img src="./assets/images/icon-decrement-quantity.svg" alt="decrement" class="cursor-pointer decrement p-2 border rounded-full w-6 h-6 hover:bg-amber-50 hover:fill-amber-900" />
-      <span class="quantity text-white font-bold">${quantity}</span>
-      <img src="./assets/images/icon-increment-quantity.svg" alt="increment" class="cursor-pointer increment p-2 border rounded-full w-6 h-6 hover:text-white" />
-    </div>
-  </div>
       `;
+    // console.log(button);
+    button.classList.remove(
+      "bg-white",
+      "border-2",
+      "hover:bg-amber-900",
+      "hover:text-white",
+      "hover:border-none"
+    );
+    button.classList.add("bg-amber-900");
 
     const incrementBtn = button.querySelector(".increment");
     const decrementBtn = button.querySelector(".decrement");
@@ -215,38 +218,30 @@ addButtonEl.forEach((button) => {
     incrementBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       quantity++;
-      console.log(quantity);
+      // console.log(quantity);
       quantityBtn.innerHTML = `${quantity}`;
 
       const item = cart.find((item) => item.name === name);
       if (item) {
         item.quantity = quantity;
       }
+      console.log(cart);
       cartUi();
     });
 
     decrementBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       // Prevent parent click or from being reset immediately
-
       const item = cart.find((item) => item.name === name);
 
       if (quantity > 1) {
         quantity--;
-        console.log(quantity);
+        // console.log(quantity);
         quantityBtn.textContent = quantity;
         // check if item is in the cart and update the quantity
         if (item) {
           item.quantity = quantity;
         }
-        cartUi();
-      } else {
-        quantity = 0;
-        if (item) {
-          item.quantity = quantity;
-        }
-        button.innerHTML = `<img src="./assets/images/icon-add-to-cart.svg" alt="" />
-                Add to cart`;
       }
       cartUi();
     });
@@ -256,20 +251,21 @@ addButtonEl.forEach((button) => {
       itemsContainer.innerHTML = "";
       // items count
       const countItems = document.querySelector(".item-count");
+      const cartItems = document.querySelector(".cart-items-count");
+      cartItems.textContent = cart.length;
       // accumulator
-      const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-      countItems.textContent = totalItems;
+      // const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+      countItems.textContent = cart.length;
       // render cart items
       cart.forEach((item) => {
         const allTotal = item.quantity * item.price;
         total += allTotal;
         const div = document.createElement("div");
-        div.className = "border-t-2 border-gray-300 my-2 py-2";
+        div.className = "box border-t-2 border-gray-300 my-2 py-2";
 
         // Add the name, quantity, price and calculated price to the ui
         div.innerHTML = `
-        
-        <div class="font-bold">${item.name}</div>
+        <div class="font-bold itemName">${item.name}</div>
         <div class="flex justify-between">
         <div class="text-gray-400"><span class="font-bold text-amber-700">${
           item.quantity
@@ -282,17 +278,36 @@ addButtonEl.forEach((button) => {
 
         itemsContainer.appendChild(div);
       });
-
+      console.log(cart);
       // delete from cart using x icon
       const removeIcon = document.querySelectorAll(".remove-icon");
       // console.log("remove Icon", removeIcon);
       removeIcon.forEach((icon) => {
-        icon.addEventListener("click", function (index) {
-          // console.log("Its clicking");
-          cart.splice(index, 1);
-          cartUi();
-          button.innerHTML = `<img src="./assets/images/icon-add-to-cart.svg" alt="" />
+        icon.addEventListener("click", function () {
+          const box = icon.closest(".box");
+          const itemName = box.querySelector(".itemName").innerText;
+
+          const index = cart.findIndex((item) => item.name === itemName);
+          console.log(index, "index");
+          if (index > -1) {
+            cart.splice(index, 1);
+          }
+
+          console.log(cart);
+          // check if the name of the item closest to the button is the name of the item in the cart
+          // if so, return the button to its original
+          addButtonEl.forEach((button) => {
+            const card = button.closest(".card");
+            const mainName = card.querySelector(".name").textContent;
+            console.log("this", mainName);
+            if (mainName === itemName) {
+              button.innerHTML = `<img src="./assets/images/icon-add-to-cart.svg" alt="" />
                 Add to cart`;
+              button.classList.add("bg-white", "border-2");
+            }
+          });
+
+          cartUi();
         });
       });
 
@@ -319,16 +334,26 @@ addButtonEl.forEach((button) => {
         countItems.innerText = 0;
         additionalInfo.classList.add("hidden");
         // reset quantity in add button
-
+        const buttonContainer = document.querySelector(".button-container");
         button.innerHTML = `
         <div class="relative">
-        <div class="normal-view  flex items-center justify-center gap-2">
+        <div class="normal-view flex items-center justify-center gap-2 ">
           <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
           <span>Add to cart</span>
         </div>
       `;
+        button.classList.add(
+          "bg-white",
+          "border-2",
+          "hover:bg-amber-900",
+          "hover:text-white",
+          "hover:border-none"
+        );
         // allow overflow in the body
         bodyEl.classList.remove("overflow-hidden");
+
+        // reset the the cart icon
+        cartItems.textContent = cart.length;
       });
     }
   }
