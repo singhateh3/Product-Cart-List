@@ -103,6 +103,12 @@ const desserts = [
 const containerEl = document.querySelector(".container");
 const bodyEl = document.querySelector("body");
 
+// confirm order
+const confirmOrder = document.querySelector(".finish-order");
+const stagnant = document.querySelector(".stagnant-bg");
+const confirmOrderBtn = document.querySelector(".confirm-order");
+const orderedItems = document.querySelector(".ordered-items");
+
 // Render desserts function
 function renderdesserts() {
   let foodUi = "";
@@ -154,11 +160,15 @@ renderdesserts();
 
 const addButtonEl = document.querySelectorAll(".addButton");
 // added itmes in the cart
+// initialize and empty cart
 const cart = [];
+const itemsContainer = document.querySelector(".items-container");
+const countItems = document.querySelector(".item-count");
+const cartItems = document.querySelector(".cart-items-count");
 const additionalInfo = document.querySelector(".additional-info");
+
 addButtonEl.forEach((button) => {
   let quantity = 0;
-  const itemsContainer = document.querySelector(".items-container");
   const card = button.closest(".card");
   const name = card.querySelector(".name").textContent;
   let priceStr = card.querySelector(".price").textContent;
@@ -250,8 +260,7 @@ addButtonEl.forEach((button) => {
       let total = 0;
       itemsContainer.innerHTML = "";
       // items count
-      const countItems = document.querySelector(".item-count");
-      const cartItems = document.querySelector(".cart-items-count");
+
       cartItems.textContent = cart.length;
       // accumulator
       // const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -281,6 +290,17 @@ addButtonEl.forEach((button) => {
       console.log(cart);
       // delete from cart using x icon
       const removeIcon = document.querySelectorAll(".remove-icon");
+      if (cart.length === 0) {
+        card.innerHTML = `
+        <h2 class="font-bold text-amber-600 px-3">Your cart (<span class="item-count">0</span>)</h2>
+        <div class="flex p-4 items-container flex-col justify-center font-redHat">
+          <img src="./assets/images/illustration-empty-cart.svg" alt="empty-cart" class="w-36">
+          <p>Your added items will appear here</p>
+        </div>
+        `;
+        renderdesserts();
+      }
+
       // console.log("remove Icon", removeIcon);
       removeIcon.forEach((icon) => {
         icon.addEventListener("click", function () {
@@ -321,49 +341,44 @@ addButtonEl.forEach((button) => {
       itemsContainer.appendChild(allTotalDiv);
 
       // start new order
-      const startNewOrderBtn = document.querySelector(".start-new-order");
-      // console.log(startNewOrderBtn);
-      startNewOrderBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        cart.length = 0;
-        itemsContainer.innerHTML = `<img src="./assets/images/illustration-empty-cart.svg" alt="empty-cart" class="w-36">
+    }
+
+    const startNewOrderBtn = document.querySelector(".start-new-order");
+    // console.log(startNewOrderBtn);
+    startNewOrderBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      cart.length = 0;
+      itemsContainer.innerHTML = `<img src="./assets/images/illustration-empty-cart.svg" alt="empty-cart" class="w-36">
           <p>Your added items will appear here</p>`;
-        confirmOrder.classList.add("hidden");
-        stagnant.classList.add("hidden");
-        // reset count items
-        countItems.innerText = 0;
-        additionalInfo.classList.add("hidden");
-        // reset quantity in add button
-        const buttonContainer = document.querySelector(".button-container");
-        button.innerHTML = `
+      confirmOrder.classList.add("hidden");
+      stagnant.classList.add("hidden");
+      // reset count items
+      countItems.innerText = 0;
+      additionalInfo.classList.add("hidden");
+      // reset quantity in add button
+      const buttonContainer = document.querySelector(".button-container");
+      button.innerHTML = `
         <div class="relative">
         <div class="normal-view flex items-center justify-center gap-2 ">
           <img src="./assets/images/icon-add-to-cart.svg" alt="add to cart" />
           <span>Add to cart</span>
         </div>
       `;
-        button.classList.add(
-          "bg-white",
-          "border-2",
-          "hover:bg-amber-900",
-          "hover:text-white",
-          "hover:border-none"
-        );
-        // allow overflow in the body
-        bodyEl.classList.remove("overflow-hidden");
+      button.classList.add(
+        "bg-white",
+        "border-2",
+        "hover:bg-amber-900",
+        "hover:text-white",
+        "hover:border-none"
+      );
+      // allow overflow in the body
+      bodyEl.classList.remove("overflow-hidden");
 
-        // reset the the cart icon
-        cartItems.textContent = cart.length;
-      });
-    }
+      // reset the the cart icon
+      cartItems.textContent = cart.length;
+    });
   }
 });
-
-// confirm order
-const confirmOrder = document.querySelector(".finish-order");
-const stagnant = document.querySelector(".stagnant-bg");
-const confirmOrderBtn = document.querySelector(".confirm-order");
-const orderedItems = document.querySelector(".ordered-items");
 
 confirmOrderBtn.addEventListener("click", function (e) {
   e.preventDefault();
